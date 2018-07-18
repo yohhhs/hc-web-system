@@ -4,10 +4,70 @@
     <meta charset="UTF-8">
     <title>收货工作台</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="css/desk.css">
 </head>
 <body>
-<script>
-    console.log(window.sessionStorage.getItem('token'))
-</script>
+<div id="app">
+    <div class="header">
+        收货工作台
+        <img class="user-icon" src="img/user.png" @click="showUser">
+    </div>
+    <p class="desc">营业部数据统计</p>
+    <ul class="count">
+        <li class="count-item">
+            <span class="count-number">{{buyGift}}</span>
+            <p>已购买礼物数</p>
+        </li>
+        <li class="count-item">
+            <span class="count-number">{{sendGift}}</span>
+            <p>已赠送礼物数</p>
+        </li>
+        <li class="count-item">
+            <span class="count-number">{{transferCount}}</span>
+            <p>转介绍客户数</p>
+        </li>
+    </ul>
+    <ul class="menu">
+        <li class="menu-item" :class="{active: status == 0}" @click="changeStatus(0)">待确认收货</li>
+        <li class="menu-item" :class="{active: status == 1}" @click="changeStatus(1)">已确认收货</li>
+    </ul>
+    <div class="search-box">
+        <div class="search-input">
+            <img class="search-icon" src="img/search.png" alt="">
+            <input class="input-item" v-modal="agentMemberName" type="text" placeholder="搜索经纪人姓名">
+        </div>
+        <span class="fliter" @click="fliterList">
+        <img class="fliter-icon" src="img/select.png" alt="">
+            筛选
+        </span>
+    </div>
+    <div class="gift-list-wrapper">
+        <ul class="gift-list">
+            <li v-for="item in orderList" class="list-item">
+                <p class="gift-title">{{item.goodsName}}</p>
+                <p class="people">经纪人：{{item.agentMemberName}}（{{item.mobile}}）</p>
+                <p class="gift-number">商品数量：<span class="number">{{item.goodsCount}}</span>盒</p>
+                <button v-if="item.orderState == 0" class="confirm-btn" @click="receiveConfirm(item.purchaseOrderId)">确认收货</button>
+                <p v-else class="time">收货时间：{{item.receiveTime}}</p>
+            </li>
+        </ul>
+        <div class="user-info-wrapper" :style="{left: showInfo ? '0' : '-250px'}">
+            <div class="user-info">
+                <img class="avatar" src="img/default.png" alt="">
+                <p class="name">{{insideMemberName}}</p>
+            </div>
+            <p class="sale-title">所属营业部</p>
+            <ul class="saleList">
+                <li v-for="item in saleDptList" class="sale-item">{{item.infoValue}}</li>
+            </ul>
+            <button class="login-out" @click="loginOut">退出登录</button>
+        </div>
+        <div v-if="showInfo" class="mask" @click="clickMask"></div>
+    </div>
+</div>
+<script src="./assets/jquery-3.3.1.min.js"></script>
+<script src="./assets/vue.js"></script>
+<script src="./assets/layer.js"></script>
+<script src="js/desk.js"></script>
 </body>
 </html>
