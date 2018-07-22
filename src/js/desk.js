@@ -10,7 +10,7 @@ new Vue({
         transferCount: 0,
         insideMemberName: '',
         agentMemberName: '',
-        status: 0,
+        status: 3,
         orderList: []
     },
     created () {
@@ -72,7 +72,7 @@ new Vue({
                     }, function (res) {
                         if (res.statusCode === 200) {
                             layer.close(index);
-                            this.getOrderList()
+                            vm.getOrderList()
                         }
                     })
                 }
@@ -83,6 +83,7 @@ new Vue({
             this.getOrderList()
         },
         changeStatus (n) {
+            this.agentMemberName = ''
             this.status = n
             this.getOrderList()
         }
