@@ -83,6 +83,7 @@ new Vue({
             this.getOrderList()
         },
         changeStatus: function (n) {
+            this.agentMemberName = ''
             this.status = n
             this.getOrderList()
         },
