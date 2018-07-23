@@ -10,10 +10,10 @@ new Vue({
         transferCount: 0,
         insideMemberName: '',
         agentMemberName: '',
-        status: 0,
+        status: 3,
         orderList: []
     },
-    created () {
+    created: function () {
         this.token = window.sessionStorage.getItem('token')
         if (!this.token) {
             window.location.href="./index.html"
@@ -23,7 +23,7 @@ new Vue({
         }
     },
     methods: {
-        getPeople () {
+        getPeople: function () {
             var vm = this
             $.post(URL + '/insideMember/getInsideMember', {
                 token: vm.token
@@ -37,7 +37,7 @@ new Vue({
                 }
             })
         },
-        getOrderList () {
+        getOrderList: function () {
             var vm = this
             $.post(URL + '/insideMember/getInsideMemberOrderList', {
                 token: vm.token,
@@ -49,17 +49,17 @@ new Vue({
                 }
             })
         },
-        showUser () {
+        showUser: function () {
             this.showInfo = true
         },
-        clickMask () {
+        clickMask: function () {
             this.showInfo = false
         },
-        loginOut () {
+        loginOut: function () {
             window.sessionStorage.clear()
             window.location.href="./index.html"
         },
-        receiveConfirm (id) {
+        receiveConfirm: function (id) {
             var vm = this
             layer.open({
                 title: '确认收货',
@@ -72,19 +72,34 @@ new Vue({
                     }, function (res) {
                         if (res.statusCode === 200) {
                             layer.close(index);
-                            this.getOrderList()
+                            vm.getOrderList()
                         }
                     })
                 }
             });
 
         },
-        fliterList () {
+        fliterList: function () {
             this.getOrderList()
         },
-        changeStatus (n) {
+        changeStatus: function (n) {
             this.status = n
             this.getOrderList()
+        },
+        formatTime: function (date) {
+            date = new Date(date)
+            var year = date.getFullYear()
+            var month = date.getMonth() + 1
+            var day = date.getDate()
+            var hour = date.getHours()
+            var minute = date.getMinutes()
+            var second = date.getSeconds()
+
+            return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':')
+        },
+        formatNumber: function (n) {
+            n = n.toString()
+            return n[1] ? n : '0' + n
         }
     }
 })

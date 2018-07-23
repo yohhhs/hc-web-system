@@ -25,7 +25,6 @@ function prod() {
     })
     gulp.task('js', () => {
         return gulp.src(Config.js.src)
-            .pipe(plugins.uglify())
             .pipe(plugins.rev())
             .pipe(gulp.dest(Config.js.dist))
             .pipe(plugins.rev.manifest())
