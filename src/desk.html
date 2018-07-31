@@ -45,25 +45,27 @@
         <ul class="gift-list">
             <li v-for="item in orderList" class="list-item">
                 <p class="gift-title">{{item.goodsName}}</p>
+                <p class="gift-on">订单编号：{{item.purchaseOrderNumber}}</p>
                 <p class="people">经纪人：{{item.agentMemberName}}（{{item.mobile}}）</p>
                 <p class="gift-number">商品数量：<span class="number">{{item.goodsCount}}</span>盒</p>
                 <button v-if="item.orderState == 3" class="confirm-btn" @click="receiveConfirm(item.purchaseOrderId)">确认收货</button>
                 <p v-else class="time">收货时间：{{formatTime(item.receiveTime)}}</p>
             </li>
         </ul>
-        <div class="user-info-wrapper" :style="{left: showInfo ? '0' : '-250px'}">
-            <div class="user-info">
-                <img class="avatar" src="img/default.png" alt="">
-                <p class="name">{{insideMemberName}}</p>
-            </div>
-            <p class="sale-title">所属营业部</p>
-            <ul class="saleList">
-                <li v-for="item in saleDptList" class="sale-item">{{item.infoValue}}</li>
-            </ul>
-            <button class="login-out" @click="loginOut">退出登录</button>
-        </div>
-        <div v-if="showInfo" class="mask" @click="clickMask"></div>
+        <p v-if="orderList.length === 0" style="text-align: center;line-height: 50px">没有相关订单</p>
     </div>
+    <div class="user-info-wrapper" :style="{left: showInfo ? '0' : '-250px'}">
+        <div class="user-info">
+            <img class="avatar" src="img/default.png" alt="">
+            <p class="name">{{insideMemberName}}</p>
+        </div>
+        <p class="sale-title">所属营业部</p>
+        <ul class="saleList">
+            <li v-for="item in saleDptList" class="sale-item">{{item.infoValue}}</li>
+        </ul>
+        <button class="login-out" @click="loginOut">退出登录</button>
+    </div>
+    <div v-if="showInfo" class="mask" @click="clickMask"></div>
 </div>
 <script src="./assets/jquery-3.3.1.min.js"></script>
 <script src="./assets/vue.js"></script>
