@@ -5,14 +5,24 @@
 .header {
   position: relative;
   width: 100%;
-  height:44px;
-  line-height: 44px;
-  font-size: 19px;
+  height:45px;
+  line-height: 45px;
+  font-size: 16px;
   text-align: center;
   color: #ffffff;
-  background-image: linear-gradient(0deg,
-          #edae27 0%,
-          #ec8541 100%);
+  background-color: #ec8541;
+}
+.gift-list-wrapper {
+  position: fixed;
+  top: 215px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+.wrapper {
+  width: 100%;
+  height: 100%;
 }
 .user-icon {
   position: absolute;
@@ -29,6 +39,27 @@
   color: #666666;
   background-color: #fff;
 }
+.user-count {
+  position: relative;
+  padding-left: 15px;
+  line-height: 40px;
+  font-size: 14px;
+  background-color: #fff;
+  border-bottom: 1px solid #f1f1f1;
+}
+.arrow-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 24px;
+  transform: translateY(-50%);
+}
+.out-icon {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  width: 24px;
+}
 .count {
   display: flex;
   justify-content: space-between;
@@ -37,6 +68,7 @@
   padding: 0 37px;
   height: 85px;
   background-color: #fff;
+  border-bottom: 5px solid #f1f1f1;
   &-item {
     text-align: center;
   }
@@ -185,14 +217,15 @@
   }
 }
 .sale-title {
-  margin: 42px 0 29px;
+  margin: 42px 0 10px;
   font-size: 16px;
   color: #ec9934;
 }
 .saleList {
   padding-left: 10px;
   .sale-item {
-    margin-bottom: 10px;
+    height: 40px;
+    line-height: 40px;
     font-size: 14px;
     color: #999;
   }
@@ -210,4 +243,9 @@
   border-radius: 38px;
   border: none;
   outline: none;
+}
+.footer-text {
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
 }

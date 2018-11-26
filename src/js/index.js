@@ -15,8 +15,8 @@ $('#loginBtn').click(function() {
         });
         return
     }
-    $.post('https://www.topasst.com/web/insideMember/login', {
-        account: account,
+    $.post('https://www.topasst.com/web/managerMember/login', {
+        mobile: account,
         password:  hex_md5(pass)
     }, function (result) {
         console.log(result)

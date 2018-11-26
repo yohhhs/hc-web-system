@@ -9,43 +9,128 @@ new Vue({
         sendGift: 1,
         transferCount: 0,
         insideMemberName: '',
-        agentMemberName: '',
+        agentMemberName: '所有区域',
         status: 3,
-        orderList: []
+        orderList: [],
+        addressCode: '',
+        areaList: [],
+        currentIndex: -1,
+        isLoading: false,
+        noMore: false,
+        pageNo: 1,
+        scroll: null,
+        countData: {
+            haveBuyMemberCount: 0,
+            toMonthSaleMoney: 0,
+            toWeekSaleMoney: 0,
+            toYearSaleMoney: 0
+        }
     },
     created: function () {
         this.token = window.sessionStorage.getItem('token')
         if (!this.token) {
-            window.location.href="./index.html"
+            window.location.href = "./index.html"
         } else {
-            this.getPeople()
             this.getOrderList()
+            this.getAreaList()
+            this.getCount()
         }
     },
     methods: {
-        getPeople: function () {
+        changeArea: function (index) {
+            if (this.scroll) {
+                this.scroll.openPullUp()
+                this.scroll.scrollTo(0, 0)
+            }
+            if (this.addressCode === this.areaList[index].addressCode) {
+                this.currentIndex = -1;
+                this.addressCode = '';
+                this.agentMemberName = '所有区域';
+            } else {
+                this.currentIndex = index;
+                this.addressCode = this.areaList[index].addressCode;
+                this.agentMemberName = this.areaList[index].addressName;
+            }
+            this.pageNo = 1;
+            this.isLoading = false;
+            this.noMore = false;
+            this.getOrderList();
+            this.clickMask()
+        },
+        getCount: function () {
             var vm = this
-            $.post(URL + '/insideMember/getInsideMember', {
-                token: vm.token
+            $.post(URL + '/managerMember/getManagerMemberData', {
+                managerMemberId: vm.token
             }, function (res) {
                 if (res.statusCode === 200) {
-                    vm.insideMemberName = res.data.insideMemberName
-                    vm.transferCount = res.data.transferCount
-                    vm.buyGift = res.data.buyGiftCount
-                    vm.sendGift = res.data.sendGiftCount
-                    vm.saleDptList = res.data.saleDptList
+                    vm.countData = res.data
+                }
+            })
+        },
+        getAreaList: function () {
+            var vm = this
+            $.post(URL + '/managerMember/getManagerMemberAreaList', {
+                managerMemberId: vm.token
+            }, function (res) {
+                if (res.statusCode === 200) {
+                    vm.areaList = res.data
                 }
             })
         },
         getOrderList: function () {
             var vm = this
-            $.post(URL + '/insideMember/getInsideMemberOrderList', {
-                token: vm.token,
-                orderState: vm.status,
-                agentMemberName: vm.agentMemberName
+            $.post(URL + '/managerMember/getManagerMemberOrderList', {
+                managerMemberId: vm.token,
+                addressCode: vm.addressCode,
+                pageNo: vm.pageNo,
+                pageSize: 10
             }, function (res) {
                 if (res.statusCode === 200) {
-                    vm.orderList = res.data
+                    vm.orderList = res.data.list
+                    vm.pageNo++
+                    if (res.data.list.length === 0) {
+                        if (vm.scroll) {
+                            vm.scroll.closePullUp()
+                        }
+                        return false;
+                    }
+                    if (!vm.scroll) {
+                        let options = {
+                            pullUpLoad: {
+                                threshold: 50
+                            }
+                        }
+                        vm.$nextTick(function () {
+                            vm.scroll = new BScroll('.wrapper', options)
+                            vm.scroll.on('pullingUp', function () {
+                                vm.isLoading = true
+                                vm.getMoreList()
+                            })
+                        })
+                    }
+                }
+            })
+        },
+        getMoreList: function () {
+            var vm = this
+            $.post(URL + '/managerMember/getManagerMemberOrderList', {
+                managerMemberId: vm.token,
+                addressCode: vm.addressCode,
+                pageNo: vm.pageNo,
+                pageSize: 10
+            }, function (res) {
+                vm.isLoading = false
+                if (res.statusCode === 200) {
+                    if (res.data.list.length < 10) {
+                        vm.noMore = true
+                        vm.scroll.closePullUp()
+                        vm.scroll.refresh()
+                    } else {
+                        vm.orderList = vm.orderList.concat(res.data.list)
+                        vm.pageNo++
+                        vm.scroll.finishPullUp()
+                        vm.scroll.refresh()
+                    }
                 }
             })
         },
@@ -57,50 +142,12 @@ new Vue({
         },
         loginOut: function () {
             window.sessionStorage.clear()
-            window.location.href="./index.html"
-        },
-        receiveConfirm: function (id) {
-            var vm = this
-            layer.open({
-                title: '确认收货',
-                content: '请确认该经济人收到货物'
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(URL + '/insideMember/receive', {
-                        token: vm.token,
-                        purchaseOrderId: id
-                    }, function (res) {
-                        if (res.statusCode === 200) {
-                            layer.close(index);
-                            vm.getOrderList()
-                        }
-                    })
-                }
-            });
-
-        },
-        fliterList: function () {
-            this.getOrderList()
+            window.location.href = "./index.html"
         },
         changeStatus: function (n) {
-            this.agentMemberName = ''
+            this.agentMemberName = '请选择所属区域'
             this.status = n
             this.getOrderList()
-        },
-        formatTime: function (date) {
-            date = new Date(date)
-            var year = date.getFullYear()
-            var month = date.getMonth() + 1
-            var day = date.getDate()
-            var hour = date.getHours()
-            var minute = date.getMinutes()
-            var second = date.getSeconds()
-
-            return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':')
-        },
-        formatNumber: function (n) {
-            n = n.toString()
-            return n[1] ? n : '0' + n
         }
     }
 })
