@@ -22,11 +22,11 @@
     </div>
     <ul class="count">
         <li class="count-item">
-            <span class="count-number">{{countData.toMonthSaleMoney}}</span>
+            <span class="count-number">{{countData.toWeekSaleMoney}}</span>
             <p>本周销售额</p>
         </li>
         <li class="count-item">
-            <span class="count-number">{{countData.toWeekSaleMoney}}</span>
+            <span class="count-number">{{countData.toMonthSaleMoney}}</span>
             <p>本月销售额</p>
         </li>
         <li class="count-item">
@@ -55,7 +55,7 @@
         </div>
     </div>
     <div class="user-info-wrapper" :style="{left: showInfo ? '0' : '-250px'}">
-        <p class="sale-title">关联区域</p>
+        <p class="sale-title">管理区域</p>
         <ul class="saleList">
             <li v-for="(item, index) in areaList" class="sale-item" :style="{color: index === currentIndex ? 'red' : '#999'}" @click="changeArea(index)">{{item.addressName}}</li>
         </ul>
